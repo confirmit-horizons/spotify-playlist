@@ -5,6 +5,7 @@ import { fetchSpotifyTracksIds } from "./utils/spotify";
 import parseArtistsTracks from "./utils/parser";
 import ResponsesView from "./ResponsesView";
 import "./css/SpotifySongSearch.css";
+import CreatePlaylistButton from "./CreatePlaylistButton";
 
 const TRACKS_KEY = "tracks";
 
@@ -59,6 +60,7 @@ const SpotifySongSearch = ({ authorized }) => {
       ) : (
         <ResponsesView responses={responses} />
       )}
+      <CreatePlaylistButton />
     </div>
   );
 };

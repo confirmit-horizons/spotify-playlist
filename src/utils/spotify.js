@@ -39,6 +39,23 @@ const fetchSpotifyApiData = async (url, token) => {
   return data;
 };
 
+export const createPlaylist = async (url, token, playlistName) => {
+  const response = await fetch(url, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    method: "POST",
+    body: JSON.stringify({ name: playlistName }),
+  });
+
+  const data = await response.json();
+  console.log(data);
+
+  if (response.status >= 400) throw parseError(data);
+
+  return data;
+};
+
 const mapToTrackModel = (spotifyModel, key) => {
   return {
     trackId: spotifyModel.id,
@@ -78,6 +95,7 @@ export const fetchSpotifyTracksIds = async (token, tracks) => {
 const mapToUserModel = (spotifyModel) => {
   return {
     username: spotifyModel.display_name,
+    id: spotifyModel.id,
     profileImage: spotifyModel.images.length ? spotifyModel.images[0].url : "",
     hasError: false,
   };

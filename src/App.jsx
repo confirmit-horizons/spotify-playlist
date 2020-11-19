@@ -18,7 +18,6 @@ const App = () => {
   useEffect(() => {
     if (!getToken()) {
       const token = getAccessTokenFromLocationHash(window.location.hash);
-      console.log(token);
       if (!token) return;
       setToken(token);
     }

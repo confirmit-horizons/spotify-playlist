@@ -1,8 +1,9 @@
 import React, { useState, useContext } from "react";
+import PropTypes from "prop-types";
 import UserContext from "./contexts/UserContext";
-import { createPlaylist } from "./utils/spotify";
+import { addTracksToPlaylist, createPlaylist } from "./utils/spotify";
 
-const CreatePlaylistButton = () => {
+const CreatePlaylistButton = ({ tracksUris }) => {
   const [playlistName, setName] = useState("");
   const userData = useContext(UserContext);
 
@@ -12,7 +13,10 @@ const CreatePlaylistButton = () => {
       userData.id,
       playlistName
     );
-    console.log(data);
+
+    const playlistId = data.id;
+
+    addTracksToPlaylist(userData.token, playlistId, tracksUris);
   };
 
   return (
@@ -29,6 +33,14 @@ const CreatePlaylistButton = () => {
       </button>
     </div>
   );
+};
+
+CreatePlaylistButton.propTypes = {
+  tracksUris: PropTypes.arrayOf(PropTypes.string),
+};
+
+CreatePlaylistButton.defaultProps = {
+  tracksUris: [],
 };
 
 export default CreatePlaylistButton;

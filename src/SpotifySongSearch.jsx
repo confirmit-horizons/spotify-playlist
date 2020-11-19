@@ -60,7 +60,9 @@ const SpotifySongSearch = ({ authorized }) => {
       ) : (
         <ResponsesView responses={responses} />
       )}
-      <CreatePlaylistButton />
+      <CreatePlaylistButton
+        tracksUris={responses.map((track) => track.trackUri)}
+      />
     </div>
   );
 };

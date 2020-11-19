@@ -57,9 +57,27 @@ export const createPlaylist = async (token, userId, playlistName) => {
   return data;
 };
 
+export const addTracksToPlaylist = async (token, playlistId, trackUris) => {
+  const url = `${SPOTIFY_BASE_URL}/playlists/${playlistId}/tracks`;
+
+  const response = await fetch(url, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    method: "POST",
+    body: JSON.stringify({ uris: trackUris }),
+  });
+
+  const data = await response.json();
+
+  if (response.status >= 400) throw parseError(data);
+
+  return data;
+};
+
 const mapToTrackModel = (spotifyModel, key) => {
   return {
-    trackId: spotifyModel.id,
+    trackUri: spotifyModel.uri,
     albumCover: spotifyModel.album.images[0].url,
     artist: spotifyModel.artists[0].name,
     album: spotifyModel.album.name,

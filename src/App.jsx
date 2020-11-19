@@ -16,13 +16,14 @@ const App = () => {
   const [userData, setUserData] = useState(null);
 
   useEffect(() => {
-    const authorize = async () => {
-      if (!getToken()) {
-        const token = getAccessTokenFromLocationHash(window.location.hash);
-        if (!token) return;
-        setToken(token);
-      }
+    if (!getToken()) {
+      const token = getAccessTokenFromLocationHash(window.location.hash);
+      console.log(token);
+      if (!token) return;
+      setToken(token);
+    }
 
+    const authorize = async () => {
       const token = getToken();
       const user = await fetchSpotifyUsername(token);
 

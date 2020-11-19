@@ -1,10 +1,18 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
+import UserContext from "./contexts/UserContext";
+import { createPlaylist } from "./utils/spotify";
 
 const CreatePlaylistButton = () => {
   const [playlistName, setName] = useState("");
+  const userData = useContext(UserContext);
 
-  const handleButtonClick = () => {
-    console.log("creating...");
+  const handleButtonClick = async () => {
+    const data = await createPlaylist(
+      userData.token,
+      userData.id,
+      playlistName
+    );
+    console.log(data);
   };
 
   return (

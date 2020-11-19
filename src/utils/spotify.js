@@ -8,7 +8,7 @@ export const generateAuthUrl = (redirectUri) => {
     client_id: CLIENT_ID,
     redirect_uri: redirectUri,
     response_type: "token",
-    scope: "user-library-read",
+    scope: "user-library-read playlist-modify-private playlist-modify-public",
   };
 
   const queryStringParams = queryString.stringify(params);
@@ -39,7 +39,9 @@ const fetchSpotifyApiData = async (url, token) => {
   return data;
 };
 
-export const createPlaylist = async (url, token, playlistName) => {
+export const createPlaylist = async (token, userId, playlistName) => {
+  const url = `${SPOTIFY_BASE_URL}/users/${userId}/playlists`;
+
   const response = await fetch(url, {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -49,7 +51,6 @@ export const createPlaylist = async (url, token, playlistName) => {
   });
 
   const data = await response.json();
-  console.log(data);
 
   if (response.status >= 400) throw parseError(data);
 

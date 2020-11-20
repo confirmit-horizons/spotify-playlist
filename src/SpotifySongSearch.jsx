@@ -6,8 +6,7 @@ import ResponsesView from "./ResponsesView";
 import "./css/SpotifySongSearch.css";
 import CreatePlaylistButton from "./CreatePlaylistButton";
 import UserContext from "./contexts/UserContext";
-
-const TRACKS_KEY = "tracks";
+import { setTracks, getTracks } from "./utils/tracksStorage";
 
 const SpotifySongSearch = ({ authorized }) => {
   const [responses, setResponses] = useState([]);
@@ -31,14 +30,14 @@ const SpotifySongSearch = ({ authorized }) => {
   };
 
   const handleClick = () => {
-    localStorage.setItem(TRACKS_KEY, rawText);
+    setTracks(rawText);
     performRequest(rawText, userData.token);
   };
 
   useEffect(() => {
     if (!authorized || !userData) return;
 
-    const text = localStorage.getItem(TRACKS_KEY);
+    const text = getTracks();
     setRawText(text);
     performRequest(text, userData.token);
   }, [authorized, userData]);

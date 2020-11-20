@@ -25,11 +25,13 @@ const parseError = (data) => {
   return null;
 };
 
-const fetchSpotifyApiData = async (url, token) => {
+const requestToApi = async (url, token, method = "GET", body = null) => {
   const response = await fetch(url, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
+    method,
+    body,
   });
 
   const data = await response.json();
@@ -42,37 +44,18 @@ const fetchSpotifyApiData = async (url, token) => {
 export const createPlaylist = async (token, userId, playlistName) => {
   const url = `${SPOTIFY_BASE_URL}/users/${userId}/playlists`;
 
-  const response = await fetch(url, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-    method: "POST",
-    body: JSON.stringify({ name: playlistName }),
-  });
-
-  const data = await response.json();
-
-  if (response.status >= 400) throw parseError(data);
-
-  return data;
+  return requestToApi(
+    url,
+    token,
+    "POST",
+    JSON.stringify({ name: playlistName })
+  );
 };
 
 export const addTracksToPlaylist = async (token, playlistId, trackUris) => {
   const url = `${SPOTIFY_BASE_URL}/playlists/${playlistId}/tracks`;
 
-  const response = await fetch(url, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-    method: "POST",
-    body: JSON.stringify({ uris: trackUris }),
-  });
-
-  const data = await response.json();
-
-  if (response.status >= 400) throw parseError(data);
-
-  return data;
+  return requestToApi(url, token, "POST", JSON.stringify({ uris: trackUris }));
 };
 
 const mapToTrackModel = (spotifyModel, key) => {
@@ -88,7 +71,7 @@ const mapToTrackModel = (spotifyModel, key) => {
   };
 };
 
-const fetchSpotifyTrackId = async (token, track) => {
+const fetchTrack = async (token, track) => {
   const param = {
     q: `artist:${track.artist} track:${track.track}`,
     type: "track",
@@ -97,7 +80,7 @@ const fetchSpotifyTrackId = async (token, track) => {
   const url = `${SPOTIFY_BASE_URL}/search?${queryString.stringify(param)}`;
 
   try {
-    const data = await fetchSpotifyApiData(url, token);
+    const data = await requestToApi(url, token);
 
     if (data.tracks.items.length)
       return mapToTrackModel(data.tracks.items[0], param.q);
@@ -107,8 +90,8 @@ const fetchSpotifyTrackId = async (token, track) => {
   }
 };
 
-export const fetchSpotifyTracksIds = async (token, tracks) => {
-  return Promise.all(tracks.map((track) => fetchSpotifyTrackId(token, track)));
+export const fetchTracks = async (token, tracks) => {
+  return Promise.all(tracks.map((track) => fetchTrack(token, track)));
 };
 
 const mapToUserModel = (spotifyModel) => {
@@ -120,10 +103,10 @@ const mapToUserModel = (spotifyModel) => {
   };
 };
 
-export const fetchSpotifyUsername = async (token) => {
+export const fetchUser = async (token) => {
   const url = `${SPOTIFY_BASE_URL}/me`;
   try {
-    const data = await fetchSpotifyApiData(url, token);
+    const data = await requestToApi(url, token);
 
     return mapToUserModel(data);
   } catch (e) {

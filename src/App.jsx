@@ -4,10 +4,7 @@ import SpotifyLogin from "./SpotifyLogin";
 import SpotifyPlaylists from "./SpotifyPlaylists";
 import SpotifySongSearch from "./SpotifySongSearch";
 import { getToken, setToken } from "./utils/tokenStorage";
-import {
-  getAccessTokenFromLocationHash,
-  fetchSpotifyUsername,
-} from "./utils/spotify";
+import { getAccessTokenFromLocationHash, fetchUser } from "./utils/spotify";
 import "./css/App.css";
 import UserContext from "./contexts/UserContext";
 
@@ -24,7 +21,7 @@ const App = () => {
 
     const authorize = async () => {
       const token = getToken();
-      const user = await fetchSpotifyUsername(token);
+      const user = await fetchUser(token);
 
       setUserData({ token, ...user });
     };

@@ -6,6 +6,8 @@ import { addTracksToPlaylist, createPlaylist } from "./utils/spotify";
 const CreatePlaylistButton = ({ tracksUris }) => {
   const [playlistName, setName] = useState("");
   const userData = useContext(UserContext);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState(false);
 
   const handleButtonClick = async () => {
     const data = await createPlaylist(
@@ -16,8 +18,17 @@ const CreatePlaylistButton = ({ tracksUris }) => {
 
     const playlistId = data.id;
 
-    addTracksToPlaylist(userData.token, playlistId, tracksUris);
+    try {
+      await addTracksToPlaylist(userData.token, playlistId, tracksUris);
+      setSuccess(true);
+    } catch (e) {
+      setError(e.message);
+    }
   };
+
+  let message = null;
+  if (success) message = <p>{playlistName} created</p>;
+  if (error) message = <p>There was an error: {error}</p>;
 
   return (
     <div>
@@ -31,6 +42,7 @@ const CreatePlaylistButton = ({ tracksUris }) => {
       <button type="button" onClick={handleButtonClick}>
         Create playlist
       </button>
+      {message}
     </div>
   );
 };

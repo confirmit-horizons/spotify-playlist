@@ -13,21 +13,26 @@ const App = () => {
   const [userData, setUserData] = useState(null);
 
   useEffect(() => {
-    if (!getToken()) {
-      const token = getAccessTokenFromLocationHash(window.location.hash);
-      if (!token) return;
-      setToken(token);
-    }
-
     const authorize = async () => {
-      const token = getToken();
-      const user = await fetchUser(token);
+      if (!getToken()) {
+        const token = getAccessTokenFromLocationHash(window.location.hash);
+        if (!token) return;
+        setToken(token);
+      }
 
+      const token = getToken();
+      setAuthorized(true);
+
+      const user = await fetchUser(`${token}`);
+
+      if (user.hasError) {
+        setAuthorized(false);
+        return;
+      }
       setUserData({ token, ...user });
     };
 
     authorize();
-    setAuthorized(true);
   }, []);
 
   return (
